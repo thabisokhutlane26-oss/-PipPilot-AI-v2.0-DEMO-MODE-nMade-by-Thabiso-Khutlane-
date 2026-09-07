@@ -1,6 +1,6 @@
 name: Build ApexPipAI Android APK
 
-"on":
+on:
   workflow_dispatch:
   push:
     branches:
@@ -22,25 +22,161 @@ jobs:
         uses: actions/setup-java@v5
         with:
           distribution: temurin
-          java-version: "17"
+          java-version: '17'
+
+      - name: Find Android project ZIP
+        shell: bash
+        run: |
+          echo "Searching for Android project ZIP..."
+
+          ZIP_FILE=$(find . \
+            -maxdepth 2 \
+            -type f \
+            -name "*.zip" \
+            -not -path "./.git/*" \
+            | head -n 1)
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "ERROR: Android project ZIP not found."
+            exit 1
+          fi
+
+          echo "ZIP found:"
+          echo "$ZIP_FILE"
+
+          echo "ZIP_FILE=$ZIP_FILE" >> "$GITHUB_ENV"
+
+      - name: Extract Android project
+        shell: bash
+        run: |
+          echo "Extracting Android project..."
+
+          rm -rf android_project
+          mkdir -p android_project
+
+          unzip -o "$ZIP_FILE" -d android_project
+
+          echo ""
+          echo "Extracted files:"
+          find android_project -maxdepth 8 -type f \
+            -not -path "*/.gradle/*" \
+            | sort | head -500
+
+      - name: Locate Gradle project
+        shell: bash
+        run: |
+          echo "Searching for settings.gradle..."
+
+          SETTINGS_FILE=$(find android_project \
+            -type f \
+            \( \
+              -name "settings.gradle" \
+              -o -name "settings.gradle.kts" \
+            \) \
+            -not -path "*/.gradle/*" \
+            | head -n 1)
+
+          if [ -z "$SETTINGS_FILE" ]; then
+            echo "ERROR: settings.gradle was not found."
+            exit 1
+          fi
+
+          PROJECT_DIR=$(dirname "$SETTINGS_FILE")
+
+          echo "Gradle project found:"
+          echo "$PROJECT_DIR"
+
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
-          gradle-version: "8.10"
+          gradle-version: '8.10'
 
       - name: Generate Gradle wrapper
+        working-directory: ${{ env.PROJECT_DIR }}
+        shell: bash
         run: |
-          gradle wrapper --gradle-version 8.10 --distribution-type bin
+          echo "Generating Gradle wrapper..."
+
+          gradle wrapper \
+            --gradle-version 8.10 \
+            --distribution-type bin
+
           chmod +x gradlew
 
+          echo "Gradle wrapper generated."
+
+      - name: Find MainActivity.kt
+        shell: bash
+        run: |
+          echo "Searching for MainActivity.kt..."
+
+          MAIN_ACTIVITY=$(find "$PROJECT_DIR" \
+            -type f \
+            -name "MainActivity.kt" \
+            -not -path "*/.gradle/*" \
+            -not -path "*/build/*" \
+            | head -n 1)
+
+          if [ -z "$MAIN_ACTIVITY" ]; then
+            echo "WARNING: MainActivity.kt was not found."
+            echo ""
+            echo "Kotlin files found:"
+            find "$PROJECT_DIR" \
+              -type f \
+              -name "*.kt" \
+              -not -path "*/.gradle/*" \
+              -not -path "*/build/*" \
+              | sort
+          else
+            echo "MainActivity.kt found:"
+            echo "$MAIN_ACTIVITY"
+          fi
+
+      - name: Check Gradle
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          ./gradlew --version
+
+      - name: Clean project
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: |
+          ./gradlew clean --stacktrace
+
       - name: Build Debug APK
+        working-directory: ${{ env.PROJECT_DIR }}
         run: |
           ./gradlew assembleDebug --stacktrace
+
+      - name: Find APK
+        shell: bash
+        run: |
+          echo "Searching for generated APK..."
+
+          APK=$(find "$PROJECT_DIR" \
+            -type f \
+            -name "*.apk" \
+            -not -path "*/.gradle/*" \
+            | head -n 1)
+
+          if [ -z "$APK" ]; then
+            echo "ERROR: No APK was generated."
+            exit 1
+          fi
+
+          echo ""
+          echo "======================================"
+          echo "APK SUCCESSFULLY GENERATED"
+          echo "======================================"
+          echo "$APK"
+
+          mkdir -p artifacts
+          cp "$APK" artifacts/ApexPipAI-debug.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v5
         with:
           name: ApexPipAI-APK
-          path: app/build/outputs/apk/debug/*.apk
+          path: artifacts/ApexPipAI-debug.apk
           if-no-files-found: error
