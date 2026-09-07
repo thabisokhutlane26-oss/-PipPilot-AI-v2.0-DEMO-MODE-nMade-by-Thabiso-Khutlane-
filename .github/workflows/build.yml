@@ -1,1275 +1,452 @@
-name: Build PipPilot AI v2.0
+==================================================
+ApexPipAI/
+==================================================
+
+FILE: settings.gradle
+--------------------------------------------------
+
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "ApexPipAI"
+
+include(":app")
+
+
+==================================================
+FILE: build.gradle
+==================================================
+
+plugins {
+    id 'com.android.application' version '8.6.1' apply false
+    id 'org.jetbrains.kotlin.android' version '2.0.21' apply false
+}
+
+
+==================================================
+FILE: gradle.properties
+==================================================
+
+org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+
+android.useAndroidX=true
+
+kotlin.code.style=official
+
+android.nonTransitiveRClass=true
+
+
+==================================================
+FILE: app/build.gradle
+==================================================
+
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.apexpipai.app'
+
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.apexpipai.app'
+
+        minSdk 23
+
+        targetSdk 35
+
+        versionCode 1
+
+        versionName '1.0'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.15.0'
+
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+
+    implementation 'com.google.android.material:material:1.12.0'
+}
+
+
+==================================================
+FILE: app/src/main/AndroidManifest.xml
+==================================================
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ApexPipAI">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+
+            <intent-filter>
+
+                <action
+                    android:name="android.intent.action.MAIN" />
+
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+
+            </intent-filter>
+
+        </activity>
+
+    </application>
+
+</manifest>
+
+
+==================================================
+FILE: app/src/main/java/com/apexpipai/app/MainActivity.kt
+==================================================
+
+package com.apexpipai.app
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var marketStatus: TextView
+    private lateinit var prediction: TextView
+    private lateinit var confidence: TextView
+    private lateinit var signal: TextView
+    private lateinit var predictButton: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+
+        super.onCreate(savedInstanceState)
+
+        setContentView(R.layout.activity_main)
+
+        marketStatus = findViewById(R.id.marketStatus)
+
+        prediction = findViewById(R.id.prediction)
+
+        confidence = findViewById(R.id.confidence)
+
+        signal = findViewById(R.id.signal)
+
+        predictButton = findViewById(R.id.predictButton)
+
+        predictButton.setOnClickListener {
+
+            runPrediction()
+
+        }
+    }
+
+    private fun runPrediction() {
+
+        marketStatus.text =
+            "Market Status: Analysis Complete"
+
+        prediction.text =
+            "UP"
+
+        confidence.text =
+            "Confidence: 78%"
+
+        signal.text =
+            "Signal: Potential UP movement"
+
+        predictButton.text =
+            "ANALYZE AGAIN"
+    }
+}
+
+
+==================================================
+FILE: app/src/main/res/layout/activity_main.xml
+==================================================
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+
+    android:layout_height="match_parent"
+
+    android:fillViewport="true">
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical"
+
+        android:padding="24dp">
+
+        <TextView
+
+            android:id="@+id/title"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:text="@string/app_name"
+
+            android:textSize="32sp"
+
+            android:textStyle="bold"
+
+            android:gravity="center"
+
+            android:layout_marginBottom="8dp" />
+
+
+        <TextView
+
+            android:id="@+id/subtitle"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:text="AI Forex Market Predictor"
+
+            android:textSize="16sp"
+
+            android:gravity="center"
+
+            android:layout_marginBottom="28dp" />
+
+
+        <TextView
+
+            android:id="@+id/marketStatus"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:text="Market Status: Ready"
+
+            android:textSize="18sp"
+
+            android:textStyle="bold"
+
+            android:gravity="center"
+
+            android:padding="16dp"
+
+            android:layout_marginBottom="16dp" />
+
+
+        <TextView
+
+            android:id="@+id/prediction"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:text="WAITING"
+
+            android:textSize="42sp"
+
+            android:textStyle="bold"
+
+            android:gravity="center"
+
+            android:padding="24dp"
+
+            android:layout_marginBottom="12dp" />
+
+
+        <TextView
+
+            android:id="@+id/confidence"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:text="Confidence: --"
+
+            android:textSize="20sp"
+
+            android:gravity="center"
+
+            android:padding="12dp"
+
+            android:layout_marginBottom="8dp" />
+
+
+        <TextView
+
+            android:id="@+id/signal"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:text="Signal: No prediction yet"
+
+            android:textSize="18sp"
+
+            android:gravity="center"
+
+            android:padding="12dp"
+
+            android:layout_marginBottom="28dp" />
+
+
+        <Button
+
+            android:id="@+id/predictButton"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="wrap_content"
+
+            android:text="RUN AI PREDICTION"
+
+            android:textSize="17sp"
+
+            android:padding="14dp" />
+
+    </LinearLayout>
+
+</ScrollView>
+
+
+==================================================
+FILE: app/src/main/res/values/strings.xml
+==================================================
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="app_name">ApexPipAI</string>
+
+</resources>
+
+
+==================================================
+FILE: app/src/main/res/values/themes.xml
+==================================================
+
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <style
+        name="Theme.ApexPipAI"
+        parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <item name="android:fontFamily">sans</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:navigationBarColor">
+            @android:color/white
+        </item>
+
+    </style>
+
+</resources>
+
+
+==================================================
+FILE: .github/workflows/build.yml
+==================================================
+
+name: Build ApexPipAI Android APK
 
 on:
+
   workflow_dispatch:
+
   push:
     branches:
       - main
+      - master
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  build:
+
+    runs-on: ubuntu-latest
 
     steps:
 
-      # 1. Get the GitHub repository
-      - name: Checkout source
-        uses: actions/checkout@v6
+      - name: Checkout
+        uses: actions/checkout@v5
 
-      # 2. Extract the Android project
-      - name: Extract Android project
-        shell: bash
-        run: |
-          set -e
 
-          if [ ! -f "PipPilotAI_Android_Project.zip" ]; then
-            echo "ERROR: PipPilotAI_Android_Project.zip was not found."
-            exit 1
-          fi
-
-          rm -rf app_project
-          mkdir -p app_project
-
-          unzip -o PipPilotAI_Android_Project.zip -d app_project
-
-          echo "Project extracted successfully."
-          find app_project -maxdepth 3 -type f | head -100
-
-      # 3. Upgrade the app
-      - name: Upgrade PipPilot AI
-        shell: bash
-        run: |
-          set -e
-
-          MAIN=$(find app_project/app/src/main \
-            -type f \
-            -name "MainActivity.kt" \
-            | head -1)
-
-          if [ -z "$MAIN" ]; then
-            echo "ERROR: MainActivity.kt was not found."
-            exit 1
-          fi
-
-          echo "MainActivity found:"
-          echo "$MAIN"
-
-          PACKAGE=$(grep -m1 '^package ' "$MAIN" \
-            | sed 's/^package //' \
-            | tr -d '\r')
-
-          if [ -z "$PACKAGE" ]; then
-            PACKAGE="com.pippilot.ai"
-          fi
-
-          echo "Package: $PACKAGE"
-
-          mkdir -p app_project/app/src/main/res/drawable
-
-          # Background
-          cat > app_project/app/src/main/res/drawable/pippilot_background.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <shape xmlns:android="http://schemas.android.com/apk/res/android">
-              <gradient
-                  android:angle="270"
-                  android:startColor="#02060D"
-                  android:centerColor="#071728"
-                  android:endColor="#03150F" />
-          </shape>
-          EOF
-
-          # Robot icon
-          cat > app_project/app/src/main/res/drawable/ic_pippilot_robot.xml <<'EOF'
-          <?xml version="1.0" encoding="utf-8"?>
-          <vector xmlns:android="http://schemas.android.com/apk/res/android"
-              android:width="108dp"
-              android:height="108dp"
-              android:viewportWidth="108"
-              android:viewportHeight="108">
-
-              <path
-                  android:fillColor="#07111F"
-                  android:pathData="M0,0h108v108h-108z" />
-
-              <path
-                  android:fillColor="#22E676"
-                  android:pathData="M30,26h48c6,0 10,4 10,10v36c0,6 -4,10 -10,10H30c-6,0 -10,-4 -10,-10V36c0,-6 4,-10 10,-10z" />
-
-              <path
-                  android:fillColor="#07111F"
-                  android:pathData="M34,42h12v12H34z" />
-
-              <path
-                  android:fillColor="#07111F"
-                  android:pathData="M62,42h12v12H62z" />
-
-              <path
-                  android:fillColor="#07111F"
-                  android:pathData="M40,66h28v6H40z" />
-
-              <path
-                  android:fillColor="#22E676"
-                  android:pathData="M51,14h6v12H51z" />
-
-              <path
-                  android:fillColor="#22E676"
-                  android:pathData="M20,20h10v6H20z" />
-
-              <path
-                  android:fillColor="#22E676"
-                  android:pathData="M78,20h10v6H78z" />
-          </vector>
-          EOF
-
-          # Create upgraded MainActivity
-          cat > /tmp/MainActivity.kt <<'EOF'
-          package __PACKAGE__
-
-          import android.app.Activity
-          import android.os.Bundle
-          import android.os.Handler
-          import android.os.Looper
-          import android.graphics.Color
-          import android.graphics.Typeface
-          import android.graphics.drawable.GradientDrawable
-          import android.view.Gravity
-          import android.view.View
-          import android.widget.*
-          import java.util.Locale
-          import kotlin.random.Random
-
-          class MainActivity : Activity() {
-
-              private val handler = Handler(Looper.getMainLooper())
-
-              private var balance = 10000.0
-              private var demoPrice = 1.17150
-              private var entryPrice = 1.17150
-              private var stopLoss = 1.16850
-              private var takeProfit = 1.17750
-
-              private var robotEnabled = true
-              private var demoEnabled = false
-              private var positionOpen = false
-              private var tradeDirection = "BUY"
-
-              private var tradeCount = 0
-              private var wins = 0
-              private var losses = 0
-
-              private lateinit var balanceText: TextView
-              private lateinit var equityText: TextView
-              private lateinit var floatingText: TextView
-              private lateinit var priceText: TextView
-              private lateinit var positionText: TextView
-              private lateinit var historyText: TextView
-              private lateinit var robotText: TextView
-              private lateinit var signalText: TextView
-
-              override fun onCreate(savedInstanceState: Bundle?) {
-                  super.onCreate(savedInstanceState)
-
-                  window.statusBarColor = Color.rgb(2, 6, 13)
-                  window.navigationBarColor = Color.rgb(2, 6, 13)
-
-                  buildDashboard()
-                  startDemoEngine()
-              }
-
-              private fun buildDashboard() {
-
-                  val scroll = ScrollView(this)
-
-                  scroll.setBackgroundResource(
-                      com.pippilot.ai.R.drawable.pippilot_background
-                  )
-
-                  val root = LinearLayout(this)
-
-                  root.orientation = LinearLayout.VERTICAL
-
-                  root.setPadding(
-                      dp(16),
-                      dp(14),
-                      dp(16),
-                      dp(28)
-                  )
-
-                  scroll.addView(root)
-
-                  // HEADER
-
-                  val header = LinearLayout(this)
-
-                  header.gravity = Gravity.CENTER_VERTICAL
-
-                  val icon = ImageView(this)
-
-                  icon.setImageResource(
-                      com.pippilot.ai.R.drawable.ic_pippilot_robot
-                  )
-
-                  header.addView(
-                      icon,
-                      LinearLayout.LayoutParams(
-                          dp(58),
-                          dp(58)
-                      )
-                  )
-
-                  val titleBox = LinearLayout(this)
-
-                  titleBox.orientation =
-                      LinearLayout.VERTICAL
-
-                  titleBox.setPadding(
-                      dp(12),
-                      0,
-                      0,
-                      0
-                  )
-
-                  titleBox.addView(
-                      text(
-                          "PipPilot AI",
-                          25,
-                          Color.WHITE,
-                          true
-                      )
-                  )
-
-                  // CREATOR NAME
-                  titleBox.addView(
-                      text(
-                          "Made by Thabiso Khutlane",
-                          12,
-                          Color.LTGRAY,
-                          false
-                      )
-                  )
-
-                  titleBox.addView(
-                      text(
-                          "AI FOREX ROBOT",
-                          11,
-                          Color.rgb(34, 230, 118),
-                          true
-                      )
-                  )
-
-                  header.addView(
-                      titleBox,
-                      LinearLayout.LayoutParams(
-                          0,
-                          -2,
-                          1f
-                      )
-                  )
-
-                  root.addView(header)
-
-                  root.addView(space(12))
-
-                  // STATUS
-
-                  val status =
-                      LinearLayout(this)
-
-                  status.orientation =
-                      LinearLayout.HORIZONTAL
-
-                  val marketText =
-                      statusText(
-                          "● MARKET CLOSED"
-                      )
-
-                  robotText =
-                      statusText(
-                          "● ROBOT ON"
-                      )
-
-                  status.addView(
-                      marketText,
-                      LinearLayout.LayoutParams(
-                          0,
-                          -2,
-                          1f
-                      )
-                  )
-
-                  status.addView(
-                      robotText,
-                      LinearLayout.LayoutParams(
-                          0,
-                          -2,
-                          1f
-                      )
-                  )
-
-                  root.addView(status)
-
-                  root.addView(space(12))
-
-                  // BALANCE
-
-                  val balanceCard = card()
-
-                  balanceCard.addView(
-                      text(
-                          "ACCOUNT BALANCE",
-                          11,
-                          Color.LTGRAY,
-                          true
-                      )
-                  )
-
-                  balanceText =
-                      text(
-                          "$10,000.00",
-                          30,
-                          Color.WHITE,
-                          true
-                      )
-
-                  balanceCard.addView(balanceText)
-
-                  val accountRow =
-                      LinearLayout(this)
-
-                  accountRow.orientation =
-                      LinearLayout.HORIZONTAL
-
-                  equityText =
-                      text(
-                          "Equity  $10,000.00",
-                          14,
-                          Color.WHITE,
-                          false
-                      )
-
-                  floatingText =
-                      text(
-                          "Floating P/L  $0.00",
-                          14,
-                          Color.WHITE,
-                          false
-                      )
-
-                  accountRow.addView(
-                      equityText,
-                      LinearLayout.LayoutParams(
-                          0,
-                          -2,
-                          1f
-                      )
-                  )
-
-                  accountRow.addView(
-                      floatingText,
-                      LinearLayout.LayoutParams(
-                          0,
-                          -2,
-                          1f
-                      )
-                  )
-
-                  balanceCard.addView(accountRow)
-
-                  root.addView(balanceCard)
-
-                  root.addView(space(12))
-
-                  // AI SIGNAL
-
-                  val signalCard = card()
-
-                  signalCard.addView(
-                      text(
-                          "LATEST AI SIGNAL",
-                          11,
-                          Color.LTGRAY,
-                          true
-                      )
-                  )
-
-                  signalText =
-                      text(
-                          "EUR/USD   BUY",
-                          27,
-                          Color.rgb(34, 230, 118),
-                          true
-                      )
-
-                  signalCard.addView(signalText)
-
-                  signalCard.addView(
-                      text(
-                          "Primary Timeframe: M15",
-                          14,
-                          Color.WHITE,
-                          false
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "Multi-Timeframe: M5 ✓   M15 ✓   H1 ✓",
-                          13,
-                          Color.LTGRAY,
-                          false
-                      )
-                  )
-
-                  signalCard.addView(space(6))
-
-                  signalCard.addView(
-                      text(
-                          "ENTRY       1.17150  (DEMO)",
-                          14,
-                          Color.WHITE,
-                          true
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "STOP LOSS   1.16850",
-                          14,
-                          Color.rgb(255, 110, 110),
-                          true
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "TAKE PROFIT 1.17750",
-                          14,
-                          Color.rgb(34, 230, 118),
-                          true
-                      )
-                  )
-
-                  signalCard.addView(space(8))
-
-                  signalCard.addView(
-                      text(
-                          "CONFIDENCE       78%",
-                          15,
-                          Color.WHITE,
-                          true
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "CONFIRMATIONS    4 / 5",
-                          15,
-                          Color.WHITE,
-                          true
-                      )
-                  )
-
-                  signalCard.addView(space(8))
-
-                  signalCard.addView(
-                      text(
-                          "✓ EMA trend aligned",
-                          13,
-                          Color.rgb(34, 230, 118),
-                          false
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "✓ RSI confirmation",
-                          13,
-                          Color.rgb(34, 230, 118),
-                          false
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "✓ MACD momentum",
-                          13,
-                          Color.rgb(34, 230, 118),
-                          false
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "✓ Support / resistance",
-                          13,
-                          Color.rgb(34, 230, 118),
-                          false
-                      )
-                  )
-
-                  signalCard.addView(
-                      text(
-                          "○ Volume confirmation",
-                          13,
-                          Color.GRAY,
-                          false
-                      )
-                  )
-
-                  signalCard.addView(space(5))
-
-                  signalCard.addView(
-                      text(
-                          "DEMO STRATEGY DATA — NOT LIVE MARKET DATA",
-                          10,
-                          Color.GRAY,
-                          false
-                      )
-                  )
-
-                  root.addView(signalCard)
-
-                  root.addView(space(12))
-
-                  // ROBOT CONTROL
-
-                  val robotCard = card()
-
-                  robotCard.addView(
-                      text(
-                          "ROBOT CONTROL",
-                          11,
-                          Color.LTGRAY,
-                          true
-                      )
-                  )
-
-                  val robotSwitch =
-                      Switch(this)
-
-                  robotSwitch.text =
-                      "Enable PipPilot AI Robot"
-
-                  robotSwitch.textSize = 15f
-
-                  robotSwitch.setTextColor(
-                      Color.WHITE
-                  )
-
-                  robotSwitch.isChecked = true
-
-                  robotSwitch.setOnCheckedChangeListener {
-                      _,
-                      checked ->
-
-                      robotEnabled = checked
-
-                      robotText.text =
-                          if (checked)
-                              "● ROBOT ON"
-                          else
-                              "● ROBOT OFF"
-                  }
-
-                  robotCard.addView(robotSwitch)
-
-                  val demoSwitch =
-                      Switch(this)
-
-                  demoSwitch.text =
-                      "Enable Demo Trading"
-
-                  demoSwitch.textSize = 15f
-
-                  demoSwitch.setTextColor(
-                      Color.WHITE
-                  )
-
-                  demoSwitch.setOnCheckedChangeListener {
-                      _,
-                      checked ->
-
-                      demoEnabled = checked
-
-                      if (
-                          checked &&
-                          robotEnabled &&
-                          !positionOpen
-                      ) {
-                          openDemoTrade()
-                      }
-                  }
-
-                  robotCard.addView(demoSwitch)
-
-                  root.addView(robotCard)
-
-                  root.addView(space(12))
-
-                  // OPEN POSITION
-
-                  val positionCard = card()
-
-                  positionCard.addView(
-                      text(
-                          "OPEN POSITION",
-                          11,
-                          Color.LTGRAY,
-                          true
-                      )
-                  )
-
-                  positionText =
-                      text(
-                          "No open demo position",
-                          16,
-                          Color.WHITE,
-                          true
-                      )
-
-                  positionCard.addView(positionText)
-
-                  priceText =
-                      text(
-                          "EUR/USD  1.17150",
-                          14,
-                          Color.LTGRAY,
-                          false
-                      )
-
-                  positionCard.addView(priceText)
-
-                  val closeButton =
-                      Button(this)
-
-                  closeButton.text =
-                      "CLOSE DEMO TRADE"
-
-                  closeButton.setOnClickListener {
-                      closeDemoTrade()
-                  }
-
-                  positionCard.addView(closeButton)
-
-                  root.addView(positionCard)
-
-                  root.addView(space(12))
-
-                  // STATISTICS
-
-                  val statsCard = card()
-
-                  statsCard.addView(
-                      text(
-                          "TRADING STATISTICS",
-                          11,
-                          Color.LTGRAY,
-                          true
-                      )
-                  )
-
-                  statsCard.addView(
-                      text(
-                          "Trades: 0",
-                          16,
-                          Color.WHITE,
-                          false
-                      )
-                  )
-
-                  statsCard.addView(
-                      text(
-                          "Wins: 0    Losses: 0",
-                          16,
-                          Color.WHITE,
-                          false
-                      )
-                  )
-
-                  historyText =
-                      text(
-                          "Trade history: Empty",
-                          13,
-                          Color.LTGRAY,
-                          false
-                      )
-
-                  statsCard.addView(historyText)
-
-                  root.addView(statsCard)
-
-                  root.addView(space(12))
-
-                  // SCAN
-
-                  val scanButton =
-                      Button(this)
-
-                  scanButton.text =
-                      "RUN AI SIGNAL SCAN"
-
-                  scanButton.setOnClickListener {
-
-                      signalText.text =
-                          "EUR/USD   $tradeDirection"
-
-                      Toast.makeText(
-                          this,
-                          "AI demo signal scanned",
-                          Toast.LENGTH_SHORT
-                      ).show()
-                  }
-
-                  root.addView(scanButton)
-
-                  root.addView(space(12))
-
-                  // CREATOR CREDIT
-
-                  root.addView(
-                      text(
-                          "PipPilot AI v2.0 • DEMO MODE",
-                          11,
-                          Color.GRAY,
-                          true
-                      )
-                  )
-
-                  root.addView(
-                      text(
-                          "Made by Thabiso Khutlane",
-                          12,
-                          Color.LTGRAY,
-                          false
-                      )
-                  )
-
-                  setContentView(scroll)
-              }
-
-              private fun startDemoEngine() {
-
-                  handler.postDelayed(
-                      object : Runnable {
-
-                          override fun run() {
-
-                              if (demoEnabled) {
-
-                                  val movement =
-                                      (
-                                          Random.nextDouble() -
-                                          0.5
-                                      ) * 0.00030
-
-                                  demoPrice += movement
-
-                                  if (
-                                      demoPrice < 1.16500
-                                  ) {
-                                      demoPrice = 1.16500
-                                  }
-
-                                  if (
-                                      demoPrice > 1.18000
-                                  ) {
-                                      demoPrice = 1.18000
-                                  }
-
-                                  updateTrade()
-
-                                  priceText.text =
-                                      "EUR/USD  " +
-                                      String.format(
-                                          Locale.US,
-                                          "%.5f",
-                                          demoPrice
-                                      )
-                              }
-
-                              handler.postDelayed(
-                                  this,
-                                  3000
-                              )
-                          }
-                      },
-                      3000
-                  )
-              }
-
-              private fun openDemoTrade() {
-
-                  if (positionOpen) return
-
-                  positionOpen = true
-                  tradeCount++
-
-                  entryPrice = demoPrice
-
-                  tradeDirection =
-                      if (Random.nextBoolean())
-                          "BUY"
-                      else
-                          "SELL"
-
-                  if (
-                      tradeDirection == "BUY"
-                  ) {
-
-                      stopLoss =
-                          entryPrice - 0.0030
-
-                      takeProfit =
-                          entryPrice + 0.0060
-
-                  } else {
-
-                      stopLoss =
-                          entryPrice + 0.0030
-
-                      takeProfit =
-                          entryPrice - 0.0060
-                  }
-
-                  positionText.text =
-                      "$tradeDirection EUR/USD\n" +
-                      "Entry: " +
-                      String.format(
-                          Locale.US,
-                          "%.5f",
-                          entryPrice
-                      ) +
-                      "\nSL: " +
-                      String.format(
-                          Locale.US,
-                          "%.5f",
-                          stopLoss
-                      ) +
-                      "\nTP: " +
-                      String.format(
-                          Locale.US,
-                          "%.5f",
-                          takeProfit
-                      )
-
-                  signalText.text =
-                      "EUR/USD   $tradeDirection"
-              }
-
-              private fun updateTrade() {
-
-                  if (!positionOpen) {
-
-                      equityText.text =
-                          "Equity  " +
-                          money(balance)
-
-                      floatingText.text =
-                          "Floating P/L  $0.00"
-
-                      return
-                  }
-
-                  val difference =
-                      if (
-                          tradeDirection == "BUY"
-                      ) {
-                          demoPrice -
-                          entryPrice
-                      } else {
-                          entryPrice -
-                          demoPrice
-                      }
-
-                  val pnl =
-                      difference *
-                      100000.0 *
-                      0.10
-
-                  equityText.text =
-                      "Equity  " +
-                      money(
-                          balance + pnl
-                      )
-
-                  floatingText.text =
-                      "Floating P/L  " +
-                      money(pnl)
-
-                  if (
-                      tradeDirection == "BUY" &&
-                      demoPrice >= takeProfit
-                  ) {
-
-                      finishTrade(pnl, true)
-
-                  } else if (
-                      tradeDirection == "BUY" &&
-                      demoPrice <= stopLoss
-                  ) {
-
-                      finishTrade(pnl, false)
-
-                  } else if (
-                      tradeDirection == "SELL" &&
-                      demoPrice <= takeProfit
-                  ) {
-
-                      finishTrade(pnl, true)
-
-                  } else if (
-                      tradeDirection == "SELL" &&
-                      demoPrice >= stopLoss
-                  ) {
-
-                      finishTrade(pnl, false)
-                  }
-              }
-
-              private fun finishTrade(
-                  pnl: Double,
-                  win: Boolean
-              ) {
-
-                  balance += pnl
-                  positionOpen = false
-
-                  if (win)
-                      wins++
-                  else
-                      losses++
-
-                  historyText.text =
-                      "Last trade: " +
-                      tradeDirection +
-                      " EUR/USD  " +
-                      money(pnl) +
-                      "\nTrades: " +
-                      tradeCount +
-                      "    Wins: " +
-                      wins +
-                      "    Losses: " +
-                      losses
-
-                  positionText.text =
-                      "Position closed\nResult: " +
-                      money(pnl)
-
-                  balanceText.text =
-                      money(balance)
-
-                  equityText.text =
-                      "Equity  " +
-                      money(balance)
-
-                  floatingText.text =
-                      "Floating P/L  $0.00"
-              }
-
-              private fun closeDemoTrade() {
-
-                  if (!positionOpen)
-                      return
-
-                  val difference =
-                      if (
-                          tradeDirection == "BUY"
-                      ) {
-                          demoPrice -
-                          entryPrice
-                      } else {
-                          entryPrice -
-                          demoPrice
-                      }
-
-                  val pnl =
-                      difference *
-                      100000.0 *
-                      0.10
-
-                  finishTrade(
-                      pnl,
-                      pnl >= 0
-                  )
-              }
-
-              private fun money(
-                  value: Double
-              ): String {
-
-                  return String.format(
-                      Locale.US,
-                      "$%,.2f",
-                      value
-                  )
-              }
-
-              private fun card():
-                  LinearLayout {
-
-                  val box =
-                      LinearLayout(this)
-
-                  box.orientation =
-                      LinearLayout.VERTICAL
-
-                  box.setPadding(
-                      dp(16),
-                      dp(14),
-                      dp(16),
-                      dp(14)
-                  )
-
-                  val bg =
-                      GradientDrawable()
-
-                  bg.setColor(
-                      Color.argb(
-                          210,
-                          7,
-                          20,
-                          35
-                      )
-                  )
-
-                  bg.cornerRadius =
-                      dp(14).toFloat()
-
-                  bg.setStroke(
-                      dp(1),
-                      Color.rgb(
-                          24,
-                          55,
-                          72
-                      )
-                  )
-
-                  box.background = bg
-
-                  return box
-              }
-
-              private fun statusText(
-                  value: String
-              ): TextView {
-
-                  return text(
-                      value,
-                      11,
-                      Color.rgb(
-                          34,
-                          230,
-                          118
-                      ),
-                      true
-                  )
-              }
-
-              private fun text(
-                  value: String,
-                  size: Int,
-                  color: Int,
-                  bold: Boolean
-              ): TextView {
-
-                  val t =
-                      TextView(this)
-
-                  t.text = value
-                  t.textSize = size.toFloat()
-                  t.setTextColor(color)
-
-                  if (bold) {
-                      t.typeface =
-                          Typeface.DEFAULT_BOLD
-                  }
-
-                  t.setPadding(
-                      0,
-                      dp(3),
-                      0,
-                      dp(3)
-                  )
-
-                  return t
-              }
-
-              private fun space(
-                  height: Int
-              ): View {
-
-                  val v = View(this)
-
-                  v.layoutParams =
-                      LinearLayout.LayoutParams(
-                          1,
-                          dp(height)
-                      )
-
-                  return v
-              }
-
-              private fun dp(
-                  value: Int
-              ): Int {
-
-                  return (
-                      value *
-                      resources
-                          .displayMetrics
-                          .density
-                  ).toInt()
-              }
-          }
-          EOF
-
-          sed "s/__PACKAGE__/$PACKAGE/g" \
-            /tmp/MainActivity.kt > "$MAIN"
-
-          # Update launcher icon
-          MANIFEST="app_project/app/src/main/AndroidManifest.xml"
-
-          if [ -f "$MANIFEST" ]; then
-
-            python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          p = Path(
-              "app_project/app/src/main/AndroidManifest.xml"
-          )
-
-          s = p.read_text()
-
-          s = re.sub(
-              r'\s+android:icon="[^"]+"',
-              '',
-              s,
-              count=1
-          )
-
-          s = re.sub(
-              r'<application(\s)',
-              r'<application android:icon="@drawable/ic_pippilot_robot"\1',
-              s,
-              count=1
-          )
-
-          p.write_text(s)
-          PY
-
-          fi
-
-      # 4. Fix Java/Kotlin compatibility
-      - name: Force Java and Kotlin JVM 17
-        shell: bash
-        run: |
-          cat >> app_project/app/build.gradle <<'EOF'
-
-          android {
-              compileOptions {
-                  sourceCompatibility JavaVersion.VERSION_17
-                  targetCompatibility JavaVersion.VERSION_17
-              }
-
-              kotlinOptions {
-                  jvmTarget = '17'
-              }
-          }
-          EOF
-
-      # 5. Java 17
-      - name: Set up Java 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
-      # 6. Gradle
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v5
         with:
-          gradle-version: '8.9'
+          gradle-version: '8.10'
 
-      # 7. Build
+
+      - name: Generate Gradle wrapper
+        run: |
+
+          gradle wrapper \
+            --gradle-version 8.10 \
+            --distribution-type bin
+
+          chmod +x gradlew
+
+
       - name: Build APK
-        working-directory: app_project
-        shell: bash
         run: |
-          set -e
 
-          echo "Starting Gradle build..."
+          ./gradlew assembleDebug --stacktrace
 
-          gradle assembleDebug --no-daemon --stacktrace
 
-      # 8. VERIFY APK EXISTS
-      - name: Verify APK exists
-        shell: bash
-        run: |
-          set -e
-
-          echo "Searching for generated APK..."
-
-          find app_project/app/build/outputs \
-            -type f \
-            -name "*.apk" \
-            -print
-
-          APK_COUNT=$(find app_project/app/build/outputs \
-            -type f \
-            -name "*.apk" \
-            | wc -l)
-
-          if [ "$APK_COUNT" -eq 0 ]; then
-            echo "ERROR: No APK was created."
-            echo "Build output:"
-            find app_project/app/build/outputs \
-              -maxdepth 6 \
-              -type f \
-              -print || true
-            exit 1
-          fi
-
-          echo "SUCCESS: $APK_COUNT APK file(s) found."
-
-          APK=$(find app_project/app/build/outputs \
-            -type f \
-            -name "*.apk" \
-            | head -1)
-
-          echo "APK:"
-          echo "$APK"
-
-          echo "APK size:"
-          du -h "$APK"
-
-      # 9. Rename APK
-      - name: Prepare APK
-        shell: bash
-        run: |
-          set -e
-
-          mkdir -p release
-
-          APK=$(find app_project/app/build/outputs \
-            -type f \
-            -name "*.apk" \
-            | head -1)
-
-          cp "$APK" \
-            "release/PipPilotAI-v2.0.apk"
-
-          echo "Release APK prepared:"
-          ls -lh release/PipPilotAI-v2.0.apk
-
-      # 10. Upload artifact
-      - name: Upload PipPilot AI APK
-        uses: actions/upload-artifact@v7
+      - name: Upload APK
+        uses: actions/upload-artifact@v5
         with:
-          name: PipPilotAI-v2.0
-          path: release/PipPilotAI-v2.0.apk
+
+          name: ApexPipAI-APK
+
+          path: app/build/outputs/apk/debug/*.apk
+
           if-no-files-found: error
-          retention-days: 30
